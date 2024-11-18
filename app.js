@@ -47,10 +47,10 @@ app.get("/api/users/:id", (req, res) => {
 });
 
 app.post("/api/users", (req, res) => {
-  const { name } = req.body;
+  const name = req.body;
 
   if (!name) {
-    return res.status(400).json({ error: "You must provide a name for a new user!" });
+    return res.status(400).json({ error: "You must provide a name for a new user!" + name });
   }
 
   const newUser = {
@@ -67,9 +67,21 @@ app.put("/api/users/:id", (req, res) => {
 });
 
 app.delete("/api/users/:id", (req, res) => {
-  // Felhasználó törlése, Sikeres kérés esetén 204-es státuszkód
+  const id = req.params.id;
+
+  if (!id) {
+    return res.status(404).json({ error: "You must provide an id to delete a user!" });
+  }
+
+  const user = users.find((userInput) => userInput.id === req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found!" });
+  }
+
+  users.reduce((user) => user.id === id);
+  res.status(204).json(users);
 });
 
 app.listen(PORT, () => {
-  console.log(`server listens on port http://localhost:${PORT}`);
+  console.log(`server listening on http://localhost:${PORT}`);
 });
